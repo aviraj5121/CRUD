@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Express.js + MongoDB Example</title>
+</head>
+<body>
+  <h1>Submit Data</h1>
+  <form method="post" action="/submit-data" onsubmit="return handleSubmit(event)">
+    <label for="id">ID:</label>
+    <input type="text" name="id" id="id">
+    <br>
+    <label for="name">Name:</label>
+    <input type="text" name="name" id="name">
+    <br>
+    <label for="mobile_number">Mobile Number:</label>
+    <input type="text" name="mobile_number" id="mobile_number">
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+  <br>
+  <h1>Fetch Data</h1>
+  <form onsubmit="return handleFetch(event)">
+    <label for="fetchId">Enter ID to fetch:</label>
+    <input type="text" id="fetchId" name="fetchId">
+    <button type="submit">Fetch</button>
+  </form>
+  <br>
+  <div id="fetch-result"></div>
+
+  <script>
+    let updateId = '';
+    function handleSubmit(event) {
+      event.preventDefault();
+      const form = event.target;
+      const id = form.id.value;
+      const name = form.name.value;
+      const mobile_number = form.mobile_number.value;
+      fetch('/submit-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id , name, mobile_number })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        form.reset();
+      })
+      .catch(error => {
+        alert(error.message);
+      })
+      return false;
+    }
+    function handleFetch(event) {
+  event.preventDefault();
+  const id = document.getElementById('fetchId').value;
+  fetch(`/fetch-data/${id}`)
+    .then(response => response.json())
+    .then(data => {
+      const fetchResultDiv = document.getElementById('fetch-result');
+      if (data && data.id) { // check if data exists and has an ID
+        updateId = data.id;
+        const form = document.querySelector('form');
+        form.id.value = data.id;
+        form.name.value = data.name;
+        form.mobile_number.value = data.mobileNumber; // use correct field name
+        fetchResultDiv.innerText = `ID: ${data.id}\nName: ${data.name}\nMobile Number: ${data.mobileNumber}`;
+      } else {
+        alert('Data not found for the given ID'); // show popup
+        fetchResultDiv.innerText = ''; // clear previous result
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert('Unable to fetch data');
+    });
+  return false;
+}
+  </script>
+</html>
