@@ -12,10 +12,16 @@
     <label for="name">Name:</label>
     <input type="text" name="name" id="name">
     <br>
-    <label for="mobile_number">Mobile Number:</label>
-    <input type="text" name="mobile_number" id="mobile_number">
+    
+    <label for="rating">Rating</label>
+    <input type="text" name="rating" id="rating">
     <br>
-    <button type="submit">Submit</button>
+    <label for="photo">Cover photo:</label>
+    <input type="file" name="photo" id="photo" accept="image/*">
+    <br>
+    <button type="submit">Submit</button>   
+    <button type="button" onclick="handleUpdate()">Update</button>
+    <button type="button" onclick="handleDelete()">Delete</button>
   </form>
   <br>
   <h1>Fetch Data</h1>
@@ -26,7 +32,8 @@
   </form>
   <br>
   <div id="fetch-result"></div>
-
+  <h1>Stored Data</h1>
+  <div id="card-container"></div>
   <script>
     let updateId = '';
     function handleSubmit(event) {
@@ -34,13 +41,14 @@
       const form = event.target;
       const id = form.id.value;
       const name = form.name.value;
-      const mobile_number = form.mobile_number.value;
+      const rating = form.rating.value;
+      const photo = form.photo.value;
       fetch('/submit-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id , name, mobile_number })
+        body: JSON.stringify({ id , name, rating, photo })
       })
       .then(response => response.json())
       .then(data => {
@@ -64,8 +72,9 @@
         const form = document.querySelector('form');
         form.id.value = data.id;
         form.name.value = data.name;
-        form.mobile_number.value = data.mobileNumber; // use correct field name
-        fetchResultDiv.innerText = `ID: ${data.id}\nName: ${data.name}\nMobile Number: ${data.mobileNumber}`;
+        form.rating.value = data.rating; 
+        from.photo.value = data.photo
+        fetchResultDiv.innerText = `ID: ${data.id}\nName: ${data.name}\nMobile Number: ${data.rating}`;
       } else {
         alert('Data not found for the given ID'); // show popup
         fetchResultDiv.innerText = ''; // clear previous result
@@ -76,6 +85,64 @@
       alert('Unable to fetch data');
     });
   return false;
+}
+function handleUpdate() {
+      const form = document.querySelector('form');
+      const id = form.id.value;
+      const name = form.name.value;
+      const rating = form.rating.value;
+      const photo = from.photo.value
+      fetch(`/update-data/${updateId}`, {
+      method: 'PUT',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id , name, rating, photo })
+      })
+      .then(response => response.json())
+      .then(data => {
+      alert(data.message);
+      form.reset();
+      const fetchResultDiv = document.getElementById('fetch-result');
+      fetchResultDiv.innerText = ''; // clear previous result
+      })
+      .catch(error => {
+      alert(error.message);
+      });
+      }
+  function handleDelete() {
+    const form = document.querySelector('form');
+    const id = form.id.value;
+    fetch(`/delete-data/${id}`, { // changed updateId to id
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert(data.message);
+    form.reset();
+    const fetchResultDiv = document.getElementById('fetch-result');
+    fetchResultDiv.innerText = '';
+  })
+  .catch(error => {
+    alert(error.message);
+  });
+}
+function createCard(data) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+  const title = document.createElement('h3');
+  title.textContent = data.name;
+  card.appendChild(title);
+  const mobileNumber = document.createElement('p');
+  mobileNumber.textContent = data.rating;
+  card.appendChild(mobileNumber);
+  const image = document.createElement('img');
+  image.src = data.photo;
+  card.appendChild(image);
+  return card;
 }
   </script>
 </html>

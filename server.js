@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 // Set up the MongoDB connection
-mongoose.connect('mongodb://localhost:27017/student', {
+mongoose.connect('mongodb://localhost:27017/movie', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -20,10 +20,10 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 const dataSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   name: String,
-  mobileNumber: Number, // Changed field name to follow JavaScript naming convention
+  rating: Number,
+  photo:Buffer
 });
-
-const Data = mongoose.model('Data', dataSchema);
+const Data = mongoose.model('Student_details', dataSchema);
 
 // Set up the middleware for parsing incoming requests
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,9 +33,9 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
-
 app.post('/submit-data', (req, res) => {
   const myData = new Data(req.body);
+  console.log(" the data saved is ",  req.body);
   myData.save()
     .then(item => {
       res.json({ message: "Data saved to database" });
@@ -66,6 +66,36 @@ app.get('/fetch-data/:id', (req, res) => {
 });
 
 // Add the update route
+app.put('/update-data/:id', (req, res) => {
+  const id = req.params.id;
+  Data.findOneAndUpdate(
+    { id: id },
+    { $set: { name: req.body.name, mobile: req.body.mobile } },
+    { new: true }
+  )
+    .then(updatedData => {
+      if (!updatedData) {
+        res.status(404).json({ message: "Data not found" });
+      } else {
+        res.json({ message: "Data updated successfully", updatedData });
+      }
+    })
+    .catch(err => {
+      res.status(400).json({ message: "Unable to update data" });
+    });
+});
+// delete the data
+app.delete('/delete-data/:id', (req, res) => {
+  const id = req.params.id;
+  Data.deleteOne({ id: id })
+  .then(result => {
+    res.json({ message: `User with ID ${id} deleted successfully` });
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete user' });
+  });
+});
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
