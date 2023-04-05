@@ -25,6 +25,7 @@ const dataSchema = new mongoose.Schema({
 const Data = mongoose.model('movie_details', dataSchema);
 
 // Set up the middleware for parsing incoming requests
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -45,6 +46,13 @@ app.post('/submit-data', (req, res) => {
       } else {
         res.status(400).json({ message: "Unable to save data to database" });
       }
+    });
+    myData.find({})
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.status(400).json({ message: "Unable to fetch data from database" });
     });
 });
 

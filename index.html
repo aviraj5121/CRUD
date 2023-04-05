@@ -5,6 +5,69 @@
   <link rel="stylesheet" href="style.css">
   <title>Express.js + MongoDB Example</title>
 </head>
+<style>
+  body{
+    background-image: linear-gradient(to right top, #1c1c1c, #191919, #161616, #131313, #0f0f0f);
+    background-attachment: fixed;
+}
+h1{
+    margin-top: 0px;
+    padding-top: 0px;
+    text-align: center;
+    color: white;
+    font-family: 'Pacifico', cursive;
+    font-size: 64px;
+}
+input
+{
+    width: 250PX;   
+    height: 30px;
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+label
+{
+    font-size: 30PX;
+    display: block;
+    margin: auto;
+    text-align: center;
+    color: white;
+}
+#drop-box{
+    position: relative;
+    left: 40%;
+    text-align: center;
+    height: 100px;
+    width: 200px;
+    background-color: aliceblue;
+    
+}
+.click{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+button{
+    background:    #a6bb8d;
+    background:    linear-gradient(#a6bb8d, #eae7b1);
+    border:        1px solid #556699;
+    border-radius: 11px;
+    width:         145px;
+    height:        50px;
+    color:         #000000;
+    display:       inline-block;
+    font:          normal bold 20px/50px "Open Sans", sans-serif;
+    text-align:    center;
+
+}
+.fetchId
+{
+    position: relative;
+    margin-top: 30px;
+    left: 45%;
+}
+</style>
 <body>
   <h1>Submit Data</h1>
   <form method="post" action="/submit-data" onsubmit="return handleSubmit(event)">
@@ -18,7 +81,7 @@
     <input type="text" name="rating" id="rating">
     <br>
     <div class="click">
-    <button type="submit">Submit</button>   
+    <button type="submit" id="submit-all">Submit</button>   
     <button type="button" onclick="handleUpdate()">Update</button>
     <button type="button" onclick="handleDelete()">Delete</button>
   </div>
@@ -36,6 +99,23 @@
   <div id="card-container"></div>
   <script>
     let updateId = '';
+    const submitBtn = document.getElementById('submit-all');
+    submitBtn.addEventListener('click', () => {
+      const dataDiv = document.getElementById('card-container');
+        fetch('/submit-data')
+          .then(response => response.json())
+          .then(data => {
+            dataDiv.innerHTML = '';
+            data.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `${item.id} - ${item.name} - ${item.rating}`;
+            dataDiv.appendChild(itemDiv);
+            });
+          })
+      .catch(error => console.error(error));
+    });
+
+        const dataDiv = document.getElementById('card-container');
     function handleSubmit(event) {
       event.preventDefault();
       const form = event.target;
