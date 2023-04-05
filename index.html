@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   <title>Express.js + MongoDB Example</title>
 </head>
 <body>
@@ -12,23 +14,21 @@
     <label for="name">Name:</label>
     <input type="text" name="name" id="name">
     <br>
-    
     <label for="rating">Rating</label>
     <input type="text" name="rating" id="rating">
     <br>
-    <label for="photo">Cover photo:</label>
-    <input type="file" name="photo" id="photo" accept="image/*">
-    <br>
+    <div class="click">
     <button type="submit">Submit</button>   
     <button type="button" onclick="handleUpdate()">Update</button>
     <button type="button" onclick="handleDelete()">Delete</button>
+  </div>
   </form>
   <br>
   <h1>Fetch Data</h1>
   <form onsubmit="return handleFetch(event)">
     <label for="fetchId">Enter ID to fetch:</label>
     <input type="text" id="fetchId" name="fetchId">
-    <button type="submit">Fetch</button>
+    <button type="submit" class="fetchId">Fetch</button>
   </form>
   <br>
   <div id="fetch-result"></div>
@@ -42,13 +42,12 @@
       const id = form.id.value;
       const name = form.name.value;
       const rating = form.rating.value;
-      const photo = form.photo.value;
       fetch('/submit-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id , name, rating, photo })
+        body: JSON.stringify({ id , name, rating})
       })
       .then(response => response.json())
       .then(data => {
@@ -73,7 +72,6 @@
         form.id.value = data.id;
         form.name.value = data.name;
         form.rating.value = data.rating; 
-        from.photo.value = data.photo
         fetchResultDiv.innerText = `ID: ${data.id}\nName: ${data.name}\nMobile Number: ${data.rating}`;
       } else {
         alert('Data not found for the given ID'); // show popup
@@ -91,7 +89,6 @@ function handleUpdate() {
       const id = form.id.value;
       const name = form.name.value;
       const rating = form.rating.value;
-      const photo = from.photo.value
       fetch(`/update-data/${updateId}`, {
       method: 'PUT',
       headers: {
@@ -129,20 +126,6 @@ function handleUpdate() {
   .catch(error => {
     alert(error.message);
   });
-}
-function createCard(data) {
-  const card = document.createElement('div');
-  card.classList.add('card');
-  const title = document.createElement('h3');
-  title.textContent = data.name;
-  card.appendChild(title);
-  const mobileNumber = document.createElement('p');
-  mobileNumber.textContent = data.rating;
-  card.appendChild(mobileNumber);
-  const image = document.createElement('img');
-  image.src = data.photo;
-  card.appendChild(image);
-  return card;
 }
   </script>
 </html>

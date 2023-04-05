@@ -20,10 +20,9 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 const dataSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   name: String,
-  rating: Number,
-  photo:Buffer
+  rating: Number
 });
-const Data = mongoose.model('Student_details', dataSchema);
+const Data = mongoose.model('movie_details', dataSchema);
 
 // Set up the middleware for parsing incoming requests
 app.use(bodyParser.urlencoded({ extended: false }));
