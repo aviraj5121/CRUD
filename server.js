@@ -5,14 +5,19 @@ const mongoose = require('mongoose');
 
 // Set up the Express.js app
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Set up the MongoDB connection
 mongoose.connect('mongodb://localhost:27017/movie', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-
+})
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
@@ -33,9 +38,10 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
+
 app.post('/submit-data', (req, res) => {
   const myData = new Data(req.body);
-  console.log(" the data saved is ",  req.body);
+  console.log("The data saved is ", req.body);
   myData.save()
     .then(item => {
       res.json({ message: "Data saved to database" });
@@ -47,16 +53,8 @@ app.post('/submit-data', (req, res) => {
         res.status(400).json({ message: "Unable to save data to database" });
       }
     });
-    myData.find({})
-    .then(data => {
-      res.json(data);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Unable to fetch data from database" });
-    });
 });
 
-// Add the fetch route
 app.get('/fetch-data/:id', (req, res) => {
   const id = req.params.id;
   Data.findOne({ id: id })
@@ -72,12 +70,11 @@ app.get('/fetch-data/:id', (req, res) => {
     });
 });
 
-// Add the update route
 app.put('/update-data/:id', (req, res) => {
   const id = req.params.id;
   Data.findOneAndUpdate(
     { id: id },
-    { $set: { name: req.body.name, mobile: req.body.mobile } },
+    { $set: { name: req.body.name, rating: req.body.rating } },
     { new: true }
   )
     .then(updatedData => {
@@ -91,17 +88,31 @@ app.put('/update-data/:id', (req, res) => {
       res.status(400).json({ message: "Unable to update data" });
     });
 });
-// delete the data
+
 app.delete('/delete-data/:id', (req, res) => {
   const id = req.params.id;
   Data.deleteOne({ id: id })
-  .then(result => {
-    res.json({ message: `User with ID ${id} deleted successfully` });
-  })
-  .catch(err => {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to delete user' });
-  });
+    .then(result => {
+      if (result.deletedCount === 0) {
+        res.status(404).json({ message: `Data with ID ${id} not found` });
+      } else {
+        res.json({ message: `Data with ID ${id} deleted successfully` });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to delete data' });
+    });
+});
+// add the fetch all data 
+app.get('/fetch-all-data', (req, res) => {
+  Data.find({})
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.status(400).json({ message: "Unable to fetch data from database" });
+    });
 });
 // Start the server
 app.listen(port, () => {

@@ -95,29 +95,16 @@ button{
   </form>
   <br>
   <div id="fetch-result"></div>
-  <h1>Stored Data</h1>
-  <div id="card-container"></div>
+  <h1>Movie Details</h1>
+  <div id="data-list">
+    <ul></ul>
+  </div>
   <script>
-    let updateId = '';
-    const submitBtn = document.getElementById('submit-all');
-    submitBtn.addEventListener('click', () => {
-      const dataDiv = document.getElementById('card-container');
-        fetch('/submit-data')
-          .then(response => response.json())
-          .then(data => {
-            dataDiv.innerHTML = '';
-            data.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.innerHTML = `${item.id} - ${item.name} - ${item.rating}`;
-            dataDiv.appendChild(itemDiv);
-            });
-          })
-      .catch(error => console.error(error));
-    });
+    
 
-        const dataDiv = document.getElementById('card-container');
+    
     function handleSubmit(event) {
-      event.preventDefault();
+      event.preventDefault(); //
       const form = event.target;
       const id = form.id.value;
       const name = form.name.value;
