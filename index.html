@@ -152,28 +152,27 @@ button{
   return false;
 }
 function handleUpdate() {
-      const form = document.querySelector('form');
-      const id = form.id.value;
-      const name = form.name.value;
-      const rating = form.rating.value;
-      fetch(`/update-data/${updateId}`, {
-      method: 'PUT',
-      headers: {
+    const form = document.querySelector('form');
+    const id = form.id.value;
+    const name = form.name.value;
+    const rating = form.rating.value;
+    fetch(`/update-data/${updateId}`, {
+    method: 'PUT',
+    headers: {
       'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id , name, rating, photo })
-      })
-      .then(response => response.json())
-      .then(data => {
+    },
+    body: JSON.stringify({ id, name, rating })
+  })
+    .then(response => response.json())
+    .then(data => {
       alert(data.message);
-      form.reset();
-      const fetchResultDiv = document.getElementById('fetch-result');
-      fetchResultDiv.innerText = ''; // clear previous result
-      })
-      .catch(error => {
-      alert(error.message);
-      });
-      }
+    form.reset();
+  })
+  .catch(error => {
+    alert(error.message);
+  })
+}
+
   function handleDelete() {
     const form = document.querySelector('form');
     const id = form.id.value;
