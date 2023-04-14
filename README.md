@@ -1,6 +1,6 @@
-<h1>Session and Role Management Project</h1>
+<h1>CRUD</h1>
 
-This project is a web application that allows for session and role management using Express.js, Node.js, HTML, and CSS.
+This project is a web application that allows us to create retrive update and delete from database using MongoDB Express.js, Node.js, HTML, and CSS.
 
 <h3>Installation</h3>
 To install the project, follow these steps:
@@ -17,7 +17,7 @@ step 3 Start the server using the command
 ```
 npm start
 ```
-Navigate to http://localhost:3002 in your web browser to access the application.
+Navigate to http://localhost:3001 in your web browser to access the application.
 Usage
 <h6>Important Note</h6>
 <p>check the url of your mongoDB to avoid the error<p>
