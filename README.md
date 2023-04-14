@@ -15,7 +15,7 @@ npm install
 ```
 step 3 Start the server using the command 
 ```
-npm start
+node server.js
 ```
 Navigate to http://localhost:3001 in your web browser to access the application.
 Usage
